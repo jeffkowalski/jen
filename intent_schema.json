@@ -1,0 +1,25 @@
+{
+    "intents": [
+        {
+            "intent": "TaskIntent",
+            "slots": [
+                {
+                    "name": "Message",
+                    "type": "LITERAL"
+                },
+                {
+                    "name": "Date",
+                    "type": "AMAZON.DATE"
+                }
+            ]
+        },
+        {
+            "intent": "JobsIntent",
+            "slots": []
+        },
+        {
+            "intent": "HelpIntent",
+            "slots": []
+        }
+    ]
+}

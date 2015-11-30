@@ -1,0 +1,26 @@
+TaskIntent remember to {sleep|Message}
+TaskIntent remember to {do something|Message}
+TaskIntent remember to {buy large eggs|Message}
+TaskIntent remember to {take the trash and recycling out|Message}
+
+TaskIntent remember to {sleep|Message} {Date}
+TaskIntent remember to {do something|Message} {Date}
+TaskIntent remember to {buy large eggs|Message} {Date}
+TaskIntent remember to {take the trash and recycling out|Message} {Date}
+
+TaskIntent remind me to {sleep|Message}
+TaskIntent remind me to {do something|Message}
+TaskIntent remind me to {buy large eggs|Message}
+TaskIntent remind me to {take the trash and recycling out|Message}
+
+TaskIntent remind me to {sleep|Message} {Date}
+TaskIntent remind me to {do something|Message} {Date}
+TaskIntent remind me to {buy large eggs|Message} {Date}
+TaskIntent remind me to {take the trash and recycling out|Message} {Date}
+
+JobsIntent jobs
+JobsIntent what are my jobs
+JobsIntent tasks
+JobsIntent what are my tasks
+
+HelpIntent help
