@@ -23,4 +23,12 @@ JobsIntent what are my jobs
 JobsIntent tasks
 JobsIntent what are my tasks
 
+SolarIntent how much power are the solar panels producing
+SolarIntent what is the solar output
+SolarIntent what is the panel output
+SolarIntent what is the power output
+SolarIntent how are the solar panels doing
+SolarIntent how is the solar
+SolarIntent how much solar
+
 HelpIntent help

@@ -74,6 +74,8 @@ class MyServer < Sinatra::Base
     p "#{request.to_s}"
     #p "#{request.request_id}"
 
+    end_session = true
+
     # Response
     # If it's a launch request
     if (request.type == 'LAUNCH_REQUEST')
@@ -82,10 +84,14 @@ class MyServer < Sinatra::Base
       # p "type: #{request.type}"
       response.add_speech("Jen is listening")
       response.add_hash_card( { :title => 'Ruby Run', :subtitle => 'Jen is listening!' } )
+      end_session = false
     end
 
     if (request.type == 'INTENT_REQUEST')
       speech = []
+      if (request.name == 'HelpIntent')
+        speech.unshift "You can ask me to remember something, or you can ask what are my jobs, or how much power are the solar panels producing."
+      end
       if (request.name == 'TaskIntent')
         date = Time.now
         if not request.slots['Date']['value'].nil?
@@ -106,9 +112,20 @@ class MyServer < Sinatra::Base
         end
       elsif (request.name == 'JobsIntent')
         buffer = open("http://carbon:3333/agenda/day").read
-        puts buffer
+        #puts buffer
         buffer.scan(/<span class="org-scheduled.*?"> \[#.\] (.*?)<\/span>/) { |job| speech.unshift "<p>#{job[0]}</p>"}
+      elsif (request.name == 'SolarIntent')
+        content = open("https://monitor.us.sunpower.com/CustomerPortal/SystemInfo/SystemInfo.svc/getRealTimeNetDisplay?id=16b94537-a17e-4346-accc-a972ae20b946").read
+        decoded = JSON.parse(content)
+        puts decoded['Payload']['CurrentProduction']['value']
+        if decoded['Payload']['CurrentProduction']['value'].to_f > 0
+          speech.unshift "The panels are producing #{decoded['Payload']['CurrentProduction']['value']} #{decoded['Payload']['CurrentProduction']['Unit'].sub(/kW/, 'kilowatts')}."
+        else
+          speech.unshift "The panels aren't producing right now."
+        end
+        #puts buffer
       end
+
       response.add_ssml('<speak>' + speech.join(' ') + '</speak>')
       response.add_hash_card( { :title => 'Ruby Intent', :subtitle => "Intent #{request.name}" } )
     end
@@ -120,8 +137,7 @@ class MyServer < Sinatra::Base
       halt 200
     end
 
-    # Return response
-    response.build_response
+    response.build_response end_session
   end
 end
 

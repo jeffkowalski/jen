@@ -18,6 +18,10 @@
             "slots": []
         },
         {
+            "intent": "SolarIntent",
+            "slots": []
+        },
+        {
             "intent": "HelpIntent",
             "slots": []
         }
