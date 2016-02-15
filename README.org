@@ -1,7 +1,5 @@
 * Installation
-sudo gem install bundler
-sudo gem install rake
-bundle
+bundle install
 
 * Certificate installation
 ** install aws cli

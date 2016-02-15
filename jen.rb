@@ -1,4 +1,4 @@
-#!/usr/bin/ruby
+#!/usr/bin/env ruby
 
 # Alexa RubyEngine
 # This Engine receives and responds to Amazon Echo's (Alexa) JSON requests.
