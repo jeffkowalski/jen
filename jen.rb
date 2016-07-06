@@ -78,21 +78,23 @@ class MyServer < Sinatra::Base
 
     # Response
     # If it's a launch request
-    if (request.type == 'LAUNCH_REQUEST')
+    case request.type
+    when 'LAUNCH_REQUEST'
       # Process your Launch Request
       # Call your methods for your application here that process your Launch Request.
       # p "type: #{request.type}"
       response.add_speech("Jen is listening")
       response.add_hash_card( { :title => 'Ruby Run', :subtitle => 'Jen is listening!' } )
       end_session = false
-    end
 
-    if (request.type == 'INTENT_REQUEST')
+    when 'INTENT_REQUEST'
       speech = []
-      if (request.name == 'HelpIntent')
+
+      case request.name
+      when 'HelpIntent'
         speech.unshift "You can ask me to remember something, or you can ask what are my jobs, or how much power are the solar panels producing."
-      end
-      if (request.name == 'TaskIntent')
+
+      when 'TaskIntent'
         date = Time.now
         if not request.slots['Date']['value'].nil?
           begin
@@ -110,27 +112,32 @@ class MyServer < Sinatra::Base
         else
           speech.unshift "Sorry, make org entry responded with #{org_response.code} #{org_response.message}."
         end
-      elsif (request.name == 'JobsIntent')
+
+      when 'JobsIntent'
         buffer = open("http://carbon:3333/agenda/day").read
         #puts buffer
         buffer.scan(/<span class="org-scheduled.*?"> \[#.\] (.*?)<\/span>/) { |job| speech.unshift "<p>#{job[0]}</p>"}
-      elsif (request.name == 'SolarIntent')
-        content = open("https://monitor.us.sunpower.com/CustomerPortal/SystemInfo/SystemInfo.svc/getRealTimeNetDisplay?id=16b94537-a17e-4346-accc-a972ae20b946").read
-        decoded = JSON.parse(content)
-        puts decoded['Payload']['CurrentProduction']['value']
-        if decoded['Payload']['CurrentProduction']['value'].to_f > 0
-          speech.unshift "The panels are producing #{decoded['Payload']['CurrentProduction']['value']} #{decoded['Payload']['CurrentProduction']['Unit'].sub(/kW/, 'kilowatts')}."
-        else
-          speech.unshift "The panels aren't producing right now."
+
+      when 'SolarIntent'
+        begin
+          content = open("https://monitor.us.sunpower.com/CustomerPortal/SystemInfo/SystemInfo.svc/getRealTimeNetDisplay?id=16b94537-a17e-4346-accc-a972ae20b946").read
+          decoded = JSON.parse(content)
+          puts decoded['Payload']['CurrentProduction']['value']
+          if decoded['Payload']['CurrentProduction']['value'].to_f > 0
+            speech.unshift "The panels are producing #{decoded['Payload']['CurrentProduction']['value']} #{decoded['Payload']['CurrentProduction']['Unit'].sub(/kW/, 'kilowatts')}."
+          else
+            speech.unshift "The panels aren't producing right now."
+          end
+        rescue Exception => e
+          speech.unshift "There was a problem accessing sunpower.  The exception was #{e}"
         end
         #puts buffer
       end
 
       response.add_ssml('<speak>' + speech.join(' ') + '</speak>')
       response.add_hash_card( { :title => 'Ruby Intent', :subtitle => "Intent #{request.name}" } )
-    end
 
-    if (request.type =='SESSION_ENDED_REQUEST')
+    when 'SESSION_ENDED_REQUEST'
       # Wrap up whatever we need to do.
       # p "type:   #{request.type}"
       # p "reason: #{request.reason}"
