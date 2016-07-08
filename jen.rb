@@ -120,11 +120,11 @@ class MyServer < Sinatra::Base
 
       when 'SolarIntent'
         begin
-          content = open("https://monitor.us.sunpower.com/CustomerPortal/SystemInfo/SystemInfo.svc/getRealTimeNetDisplay?id=16b94537-a17e-4346-accc-a972ae20b946").read
+          content = open('https://monitor.us.sunpower.com/CustomerPortal/CurrentPower/CurrentPower.svc/GetCurrentPower?id=8ec247ec-f917-49ca-b9a6-bfc60ec089d2').read
           decoded = JSON.parse(content)
-          puts decoded['Payload']['CurrentProduction']['value']
-          if decoded['Payload']['CurrentProduction']['value'].to_f > 0
-            speech.unshift "The panels are producing #{decoded['Payload']['CurrentProduction']['value']} #{decoded['Payload']['CurrentProduction']['Unit'].sub(/kW/, 'kilowatts')}."
+          puts decoded['Payload']['CurrentProduction']
+          if decoded['Payload']['CurrentProduction'].to_f > 0
+            speech.unshift "The panels are producing #{decoded['Payload']['CurrentProduction']} kilowatts."
           else
             speech.unshift "The panels aren't producing right now."
           end
