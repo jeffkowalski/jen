@@ -15,7 +15,7 @@ require 'net/http'
 require 'uri'
 require 'open-uri'
 require 'yaml/store'
-
+require 'humanize'
 
 def encodeURIcomponent str
   return URI.escape(str, Regexp.new("[^#{URI::PATTERN::UNRESERVED}]"))
@@ -41,6 +41,43 @@ module AlexaRubykit
       @speech = { :type => 'SSML', :ssml => speech_text }
       @speech
     end
+  end
+end
+
+
+class Float
+  def fuzz unit
+    int = itself.to_int
+    frac = ((itself - int) * 100).to_int
+    prefix = case frac %25
+             when 0..3
+               "about"
+             when 4..12
+               "a little more than"
+             when 13..22
+               "a little less than"
+             when 22..24
+               "about"
+             end
+    quadrant = case frac
+               when 0..12
+                 nil
+               when 13..12+25
+                 'a quarter'
+               when 13+25..12+50
+                 'a half'
+               when 13+50..12+75
+                 'three quarters'
+               when 13+75..99
+                 int += 1
+                 nil
+               end
+    composite = prefix
+    composite += " " + int.humanize.strip if quadrant.nil? || int != 0
+    quadrant = "and " + quadrant unless quadrant.nil? || int == 0
+    composite = [composite, quadrant, unit].compact.join(' ')
+    composite += 's' unless int == 1 && composite.match(/one\s*$/) || int == 0 && !quadrant.nil?
+    return composite
   end
 end
 
@@ -134,8 +171,13 @@ class MyServer < Sinatra::Base
           puts current_power_response
           decoded = JSON.parse current_power_response
 
-          if decoded['Payload']['CurrentProduction'].to_f > 0
-            speech.unshift "The panels are producing #{decoded['Payload']['CurrentProduction']} kilowatts."
+          production = decoded['Payload']['CurrentProduction'].to_f
+          if production > 0
+            if production < 1.0
+              speech.unshift "The panels are producing #{(production*1000).fuzz('watt')}."
+            else
+              speech.unshift "The panels are producing #{production.fuzz('kilowatt')}."
+            end
           else
             speech.unshift "The panels aren't producing right now."
           end
