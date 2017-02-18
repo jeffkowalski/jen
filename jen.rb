@@ -205,14 +205,14 @@ end
 CERT_PATH = './'
 
 webrick_options = {
-  :Host               => '192.168.1.147',
+  :Host               => '192.168.1.34',
   :Port               => 8443,
   :Logger             => WEBrick::Log::new($stderr, WEBrick::Log::DEBUG),
   :DocumentRoot       => "/ruby/htdocs",
   :SSLEnable          => true,
   :SSLVerifyClient    => OpenSSL::SSL::VERIFY_NONE,
-  :SSLCertificate     => OpenSSL::X509::Certificate.new(  File.open(File.join(CERT_PATH, "server.crt")).read),
-  :SSLPrivateKey      => OpenSSL::PKey::RSA.new(          File.open(File.join(CERT_PATH, "privatekey.pem")).read),
+  :SSLCertificate     => OpenSSL::X509::Certificate.new(  File.open(File.join(CERT_PATH, "certificate.pem")).read),
+  :SSLPrivateKey      => OpenSSL::PKey::RSA.new(          File.open(File.join(CERT_PATH, "private-key.pem")).read),
   :app                => MyServer
 }
 

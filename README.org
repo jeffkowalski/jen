@@ -2,16 +2,15 @@
 bundle install
 
 * Certificate installation
-** install aws cli
-sudo apt-get install awscli
-** generate key
-openssl genrsa > privatekey.pem
-** generate certificate signing request
-openssl req -new -key privatekey.pem -out csr.pem
-** self sign certificate
-openssl x509 -req -days 365 -in csr.pem -signkey privatekey.pem -out server.crt
-** upload to aws
-aws iam upload-server-certificate --server-certificate-name rubykey-demo --certificate-body file://server.crt --private-key file://privatekey.pem
+** Run the following command to create a private key:
+ openssl genrsa -out private-key.pem 2048
+** Use the following command to generate a certificate. Specify the names you used for your private-key.pem and configuration.cnf files:
+openssl req -new -x509 -days 365 \
+            -key private-key.pem \
+            -config configuration.cnf \
+            -out certificate.pem
+This produces a self-signed certificate in a file called certificate.pem.
+** Save the certificate .pem, private key .pem, and the configuration .cnf files in a safe place, then update the skill configuration with the certificate.
 
 * Dashboard
 https://developer.amazon.com/edw/home.html#/skills/list

@@ -1,4 +1,3 @@
 /credentials.csv
-/privatekey.pem
-/server.crt
-/csr.pem
+/private-key.pem
+/certificate.pem
