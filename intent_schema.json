@@ -1,29 +1,83 @@
 {
-    "intents": [
-        {
-            "intent": "TaskIntent",
-            "slots": [
+    "interactionModel": {
+        "languageModel": {
+            "invocationName": "jen",
+            "intents": [
                 {
-                    "name": "Message",
-                    "type": "LITERAL"
+                    "name": "TaskIntent",
+                    "slots": [
+                        {
+                            "name": "Message",
+                            "type": "LITERAL"
+                        },
+                        {
+                            "name": "Date",
+                            "type": "AMAZON.DATE"
+                        }
+                    ],
+                    "samples": [
+                        "remember to {sleep|Message}",
+                        "remember to {do something|Message}",
+                        "remember to {buy large eggs|Message}",
+                        "remember to {take the trash and recycling out|Message}",
+                        "remember to {sleep|Message} {Date}",
+                        "remember to {do something|Message} {Date}",
+                        "remember to {buy large eggs|Message} {Date}",
+                        "remember to {take the trash and recycling out|Message} {Date}",
+                        "remind me to {sleep|Message}",
+                        "remind me to {do something|Message}",
+                        "remind me to {buy large eggs|Message}",
+                        "remind me to {take the trash and recycling out|Message}",
+                        "remind me to {sleep|Message} {Date}",
+                        "remind me to {do something|Message} {Date}",
+                        "remind me to {buy large eggs|Message} {Date}",
+                        "remind me to {take the trash and recycling out|Message} {Date}"
+                    ]
                 },
                 {
-                    "name": "Date",
-                    "type": "AMAZON.DATE"
+                    "name": "JobsIntent",
+                    "slots": [],
+                    "samples": [
+                        "jobs",
+                        "what are my jobs",
+                        "tasks",
+                        "what are my tasks"
+                    ]
+                },
+                {
+                    "name": "SolarIntent",
+                    "slots": [],
+                    "samples": [
+                        "how much power are the solar panels producing",
+                        "what is the solar output",
+                        "what is the panel output",
+                        "what is the power output",
+                        "how are the solar panels doing",
+                        "how is the solar",
+                        "how much solar"
+                    ]
+                },
+                {
+                    "name": "PoolIntent",
+                    "slots": [],
+                    "samples": [
+                        "PoolIntent how warm is the pool",
+                        "PoolIntent what is the temperature of the pool",
+                        "PoolIntent what is the pool temperature",
+                        "PoolIntent how is the pool",
+                        "PoolIntent how is the pool doing",
+                        "PoolIntent what is the pool status"
+                    ]
+                },
+                {
+                    "name": "HelpIntent",
+                    "slots": [],
+                    "samples": [
+                        "help"
+                    ]
                 }
-            ]
-        },
-        {
-            "intent": "JobsIntent",
-            "slots": []
-        },
-        {
-            "intent": "SolarIntent",
-            "slots": []
-        },
-        {
-            "intent": "HelpIntent",
-            "slots": []
+            ],
+            "types": []
         }
-    ]
+    }
 }
