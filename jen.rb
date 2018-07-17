@@ -10,6 +10,18 @@ require 'openssl'
 require 'alexa_rubykit'
 require 'json'
 
+require 'holidays'
+require 'chronic'
+require 'action_view'
+include ActionView::Helpers::DateHelper
+
+class Date
+  def weekend_or_holiday?
+    itself.saturday? or itself.sunday? or not Holidays.on(itself, :federal_reserve).empty?
+  end
+end
+
+
 
 def encodeURIcomponent str
   return URI.escape(str, Regexp.new("[^#{URI::PATTERN::UNRESERVED}]"))
@@ -89,6 +101,8 @@ class MyServer < Sinatra::Base
   post '/' do
     # Check that it's a valid Alexa request
     request_json = JSON.parse(request.body.read.to_s)
+    $logger.info request_json
+
     # Creates a new Request object with the request parameter.
     alexa_request = AlexaRubykit.build_request(request_json)
 
@@ -229,7 +243,67 @@ class MyServer < Sinatra::Base
         rescue Exception => e
           speech.unshift "There was a problem accessing the pool controller.  The exception was #{e}"
         end
+
+      when 'PowerIntent'
+        begin
+
+          today = Date::today
+          tomorrow = today + 1
+          hour = Time::now.hour
+
+          if today.weekend_or_holiday?
+            # weekend
+            if hour < 15
+              # [:off_peak, "3pm", :peak]
+              change = "3pm"
+              speech.unshift "Now is a great time to use electricity, because it's off-peak rate for #{distance_of_time_in_words(Time::now, Chronic.parse(change))} until #{change}, when it will change to the peak rate."
+            elsif hour < 19
+              # [:peak, "7pm", :off_peak]
+              change = "7pm"
+              speech.unshift "Now is a really expensive time to use electricity, because it's peak rate for #{distance_of_time_in_words(Time::now, Chronic.parse(change))} until #{change}, when it will change to the off-peak rate."
+            elsif tomorrow.weekend_or_holiday?
+              # [:off_peak, "tomorrow 3pm", :peak]
+              change = "tomorrow 3pm"
+              speech.unshift "Now is a great time to use electricity, because it's off-peak rate for #{distance_of_time_in_words(Time::now, Chronic.parse(change))} until #{change}, when it will change to the peak rate."
+            else
+              # [:off_peak, "tomorrow 7am", :partial_peak]
+              change = "tomorrow 7am"
+              speech.unshift "Now is a great time to use electricity, because it's off-peak rate for #{distance_of_time_in_words(Time::now, Chronic.parse(change))} until #{change}, when it will change to the peak rate."
+            end
+          else
+            if hour < 7
+              # [:off_peak, "7am", :partial_peak]
+              change = "7am"
+              speech.unshift "Now is a great time to use electricity, because it's off-peak rate for #{distance_of_time_in_words(Time::now, Chronic.parse(change))} until #{change}, when it will change to the peak rate."
+            elsif hour < 14
+              # [:partial_peak, "2pm", :peak]
+              change = "2pm"
+              speech.unshift "Now is a not the best time to use electricity, because it's partial-peak rate for #{distance_of_time_in_words(Time::now, Chronic.parse(change))} until #{change}."
+            elsif hour < 21
+              # [:peak, "9pm", :partial_peak]
+              change = "9pm"
+              speech.unshift "Now is a really expensive time to use electricity, because it's peak rate for #{distance_of_time_in_words(Time::now, Chronic.parse(change))} until #{change}, when it will change to the partial-peak rate."
+            elsif hour < 23
+              # [:partial_peak, "11pm", :off_peak]
+              change = "11pm"
+              speech.unshift "Now is a not the best time to use electricity, because it's partial-peak rate for #{distance_of_time_in_words(Time::now, Chronic.parse(change))} until #{change} when it will change to the off-peak rate."
+            elsif tomorrow.weekend_or_holiday?
+              # [:off_peak, "tomorrow 3pm", :peak]
+              change = "tomorrow 3pm"
+              speech.unshift "Now is a great time to use electricity, because it's off-peak rate for #{distance_of_time_in_words(Time::now, Chronic.parse(change))} until #{change}, when it will change to the peak rate."
+            else
+              # [:off_peak, "tomorrow 7am", :partial_peak]
+              change = "tomorrow 7am"
+              speech.unshift "Now is a great time to use electricity, because it's off-peak rate for #{distance_of_time_in_words(Time::now, Chronic.parse(change))} until #{change}, when it will change to the peak rate."
+            end
+          end
+
+        rescue Exception => e
+          speech.unshift "There was a problem responding.  The exception was #{e}"
+        end
       end
+
+      $logger.info speech
 
       alexa_response.add_ssml('<speak>' + speech.join(' ') + '</speak>')
       alexa_response.add_hash_card( { :title => 'Ruby Intent', :subtitle => "Intent #{alexa_request.name}" } )
@@ -259,5 +333,33 @@ webrick_options = {
   :SSLPrivateKey      => OpenSSL::PKey::RSA.new(          File.open(File.join(CERT_PATH, "private-key.pem")).read),
   :app                => MyServer
 }
+
+
+require 'logger'
+
+LOGFILE = File.join(Dir.home, '.jen.log')
+
+def redirect_output
+  unless LOGFILE == 'STDOUT'
+    logfile = File.expand_path(LOGFILE)
+    FileUtils.mkdir_p(File.dirname(logfile), :mode => 0755)
+    FileUtils.touch logfile
+    File.chmod 0644, logfile
+    $stdout.reopen logfile, 'a'
+  end
+  $stderr.reopen $stdout
+  $stdout.sync = $stderr.sync = true
+end
+
+def setup_logger
+  redirect_output
+
+  $logger = Logger.new STDOUT
+  $logger.level = Logger::DEBUG
+  $logger.info 'starting'
+end
+
+setup_logger
+
 
 Rack::Server.start webrick_options

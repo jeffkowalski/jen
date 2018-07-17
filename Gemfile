@@ -5,6 +5,9 @@ gem 'sinatra'
 gem 'humanize'
 gem 'json'
 gem 'rest-client'
+gem 'holidays'
+gem 'chronic'
+gem 'dotiw'
 
 # for robe:
 gem 'pry'

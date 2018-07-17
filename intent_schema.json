@@ -61,12 +61,46 @@
                     "name": "PoolIntent",
                     "slots": [],
                     "samples": [
-                        "PoolIntent how warm is the pool",
-                        "PoolIntent what is the temperature of the pool",
-                        "PoolIntent what is the pool temperature",
-                        "PoolIntent how is the pool",
-                        "PoolIntent how is the pool doing",
-                        "PoolIntent what is the pool status"
+                        "how warm is the pool",
+                        "what is the temperature of the pool",
+                        "what is the pool temperature",
+                        "how is the pool",
+                        "how is the pool doing",
+                        "what is the pool status"
+                    ]
+                },
+                {
+                    "name": "PowerIntent",
+                    "slots": [
+                        {
+                            "name": "Appliance",
+                            "type": "LITERAL"
+                        }
+                    ],
+                    "samples": [
+                        "can I run the {dishwasher|Appliance}",
+                        "can I run the {washer|Appliance}",
+                        "can I run the {washing machine|Appliance}",
+                        "can I run the {dryer|Appliance}",
+                        "can I run the {oven|Appliance}",
+                        "can I run the {stove|Appliance}",
+                        "can I run the {hair dryer|Appliance}",
+                        "can I run the {electric|Appliance}",
+                        "can I use the {dishwasher|Appliance}",
+                        "can I do laundry",
+                        "can I do wash the dishes",
+                        "when can I do laundry",
+                        "when can I do wash the dishes",
+                        "if can I run the {dishwasher|Appliance}",
+                        "if can I use the {dishwasher|Appliance}",
+                        "if can I run the {dishwasher|Appliance} now",
+                        "if can I use the {dishwasher|Appliance} now",
+                        "if it is OK to run the {dishwasher|Appliance} now",
+                        "if it's OK to use the {dishwasher|Appliance}",
+                        "when can I run the {dishwasher|Appliance}",
+                        "when I can run the {dishwasher|Appliance}",
+                        "when can I use the {dishwasher|Appliance}",
+                        "when I can use the {dishwasher|Appliance}"
                     ]
                 },
                 {
