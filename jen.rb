@@ -337,7 +337,7 @@ webrick_options = {
 
 require 'logger'
 
-LOGFILE = File.join(Dir.home, '.jen.log')
+LOGFILE = File.join(Dir.home, '.log', '.jen.log')
 
 def redirect_output
   unless LOGFILE == 'STDOUT'
