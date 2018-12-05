@@ -6,6 +6,8 @@ gem 'dotiw'
 gem 'holidays'
 gem 'humanize'
 gem 'json'
+gem "loofah", ">= 2.2.3"
+gem "rack", ">= 2.0.6"
 gem 'rest-client'
 gem 'sinatra'
 
