@@ -22,7 +22,7 @@ class Date
   end
 end
 
-def encodeURIcomponent(str)
+def encode_uri_component(str)
   URI.escape(str, Regexp.new("[^#{URI::PATTERN::UNRESERVED}]"))
 end
 
