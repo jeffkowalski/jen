@@ -32,7 +32,7 @@ def make_org_entry(heading, context, priority, date, body)
   #  $logger.debug "#{body}"
   title = encode_uri_component "[#{priority}] #{heading}  :#{context}:"
   body  = encode_uri_component "SCHEDULED: #{date}\n#{body}"
-  uri = URI.parse('http://carbon.zt:3333')
+  uri = URI.parse('http://cube.zt:3333')
   http = Net::HTTP.new(uri.host, uri.port)
   request = Net::HTTP::Get.new("/capture/b/LINK/#{title}/#{body}")
   response = http.request(request)
@@ -159,7 +159,7 @@ class MyServer < Sinatra::Base
         end
 
       when 'JobsIntent'
-        buffer = open('http://carbon.zt:3333/agenda/day').read
+        buffer = open('http://cube.zt:3333/agenda/day').read
         # puts buffer
         buffer.scan(/<span class="org-scheduled.*?"> \[#.\] (.*?)<\/span>/) { |job| speech.unshift "<p>#{job[0]}</p>" }
 
